@@ -7,7 +7,14 @@ animate();
 
 function init() {
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.OrthographicCamera(
+        window.innerWidth / -2, 
+        window.innerWidth / 2, 
+        window.innerHeight / 2, 
+        window.innerHeight / -2, 
+        0.1, 
+        1000
+    );
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -15,21 +22,21 @@ function init() {
     // Add lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    scene.add(directionalLight);
 
     // Create player
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const geometry = new THREE.BoxGeometry(50, 50, 0);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     player = new THREE.Mesh(geometry, material);
     scene.add(player);
-    camera.position.z = 5;
+    player.position.set(0, 0, 0);
+    camera.position.set(0, 0, 100);
+    camera.lookAt(0, 0, 0);
 
     // Create bots
     for (let i = 0; i < 29; i++) {
         const botMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         const bot = new THREE.Mesh(geometry, botMaterial);
-        bot.position.set(Math.random() * 10 - 5, Math.random() * 10 - 5, Math.random() * 10 - 5);
+        bot.position.set(Math.random() * 1000 - 500, Math.random() * 1000 - 500, 0);
         bots.push(bot);
         scene.add(bot);
     }
@@ -38,7 +45,7 @@ function init() {
     for (let i = 0; i < 10; i++) {
         const chestMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
         const chest = new THREE.Mesh(geometry, chestMaterial);
-        chest.position.set(Math.random() * 10 - 5, Math.random() * 10 - 5, Math.random() * 10 - 5);
+        chest.position.set(Math.random() * 1000 - 500, Math.random() * 1000 - 500, 0);
         chests.push(chest);
         scene.add(chest);
     }
@@ -52,10 +59,10 @@ function init() {
 
 function onKeyDown(event) {
     switch (event.key) {
-        case 'w': player.position.z -= 0.1; break;
-        case 's': player.position.z += 0.1; break;
-        case 'a': player.position.x -= 0.1; break;
-        case 'd': player.position.x += 0.1; break;
+        case 'w': player.position.y += 10; break;
+        case 's': player.position.y -= 10; break;
+        case 'a': player.position.x -= 10; break;
+        case 'd': player.position.x += 10; break;
         case ' ': shoot(); break; // Space key to shoot
     }
 }
@@ -63,7 +70,7 @@ function onKeyDown(event) {
 function shoot() {
     // Simplified shooting logic
     bots.forEach((bot, index) => {
-        if (bot.position.distanceTo(player.position) < 1) {
+        if (bot.position.distanceTo(player.position) < 50) {
             scene.remove(bot);
             bots.splice(index, 1);
         }
@@ -78,10 +85,10 @@ function shoot() {
 function moveBots() {
     bots.forEach(bot => {
         const direction = new THREE.Vector3().subVectors(player.position, bot.position).normalize();
-        bot.position.add(direction.multiplyScalar(0.02)); // Adjust speed as necessary
+        bot.position.add(direction.multiplyScalar(2)); // Adjust speed as necessary
 
         // Check collision with player (for simplicity, just end the game if they collide)
-        if (bot.position.distanceTo(player.position) < 0.5) {
+        if (bot.position.distanceTo(player.position) < 50) {
             alert('You were caught by a bot!');
             window.location.reload();
         }
@@ -97,7 +104,10 @@ function animate() {
 window.addEventListener('resize', onWindowResize, false);
 
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.left = window.innerWidth / -2;
+    camera.right = window.innerWidth / 2;
+    camera.top = window.innerHeight / 2;
+    camera.bottom = window.innerHeight / -2;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
