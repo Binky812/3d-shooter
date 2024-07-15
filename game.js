@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-
 let scene, camera, renderer;
 let player, bots = [], chests = [];
 let victoryText;
@@ -21,7 +19,7 @@ function init() {
     scene.add(directionalLight);
 
     // Create player
-    const geometry = new THREE.BoxGeometry();
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     player = new THREE.Mesh(geometry, material);
     scene.add(player);
@@ -94,4 +92,12 @@ function animate() {
     requestAnimationFrame(animate);
     moveBots();
     renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 }
