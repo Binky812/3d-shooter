@@ -38,7 +38,6 @@ function init() {
         const bot = new THREE.Mesh(geometry, botMaterial);
         bot.position.set(Math.random() * 1000 - 500, Math.random() * 1000 - 500, 0);
         bots.push(bot);
-        scene.add(bot);
     }
 
     // Create chests
