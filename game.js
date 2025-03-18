@@ -87,9 +87,8 @@ function moveBots() {
         bot.position.add(direction.multiplyScalar(2)); // Adjust speed as necessary
 
         // Check collision with player (for simplicity, just end the game if they collide)
-        if (bot.position.distanceTo(player.position) < 50) {
-            alert('You were caught by a bot!');
-            window.location.reload();
+        if (bot.position.distanceTo(player.position) < 0.0000000001) {
+            victoryText.style.display = 'block';
         }
     });
 }
